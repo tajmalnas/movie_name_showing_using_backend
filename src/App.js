@@ -5,12 +5,13 @@ import './App.css';
 
 function App() {
 
-  const [movies,setMovies] = useState([])
+  const [movies,setMovies] = useState([]);
+  const [isLoading,setIsloading] = useState(false);
 
-  function fetchMovieHandler(){
-    fetch('https://swapi.py4e.com/api/films/').then(response=>{
-      return response.json();
-    }).then(data=>{
+  async function fetchMovieHandler(){
+    setIsloading(true);
+    const response=await fetch('https://swapi.py4e.com/api/films/')
+      const data = await response.json();
       const transformMovies = data.results.map(movieData=>{
         return {
           id:movieData.episode_id,
@@ -21,8 +22,7 @@ function App() {
 
       })
       setMovies(transformMovies);
-    })
-
+      setIsloading(false);
   }
 
   return (
@@ -31,7 +31,9 @@ function App() {
         <button onClick={fetchMovieHandler}>Fetch Movies</button>
       </section>
       <section>
-        <MoviesList movies={movies} />
+        {!isLoading && movies.length>0 && <MoviesList movies={movies} />}
+        {!isLoading && movies.length===0 && <p>We dont have any movies</p>}
+        {isLoading && <p>Loading</p>}
       </section>
     </React.Fragment>
   );
